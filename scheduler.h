@@ -23,7 +23,7 @@ typedef struct task_info { // each task has many features
     u_int start_time;
     u_int finish_time; // finish time
     u_int null; // indicates a task has finished, i.e. 'removed' from ready queue
-    u_int doneThisRound; //used for round robin
+    u_int TurnTaken; //used for round robin
 } task_t;
 
 typedef struct stat_info { // statistical analysis

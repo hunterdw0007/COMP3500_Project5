@@ -84,7 +84,7 @@ int main( int argc, char *argv[] )  {
     for (int i = 0; i < count; i++) {
         TaskArr[i].queued = 0;
         TaskArr[i].null = 0;
-        TaskArr[i].doneThisRound = 0;
+        TaskArr[i].TurnTaken = 0;
     }
 
     printf("==================================================================\n");
@@ -137,43 +137,51 @@ void fcfs_policy(task_t TaskArr[], u_int count) {
     u_int CanContinue = 1;
     
     while (CanContinue == 1) {
-        for (int i = 0; i < count; i++) { // this is for handling tasks as they 'arrive'
+        // This looks for tasks that have 'arrived'
+        for (int i = 0; i < count; i++) {
             if (TaskArr[i].queued == 0 && TaskArr[i].arrival_time <= CurrentTime) {
                 TaskArr[i].remaining_time = TaskArr[i].burst_time;
                 ReadyArr[ReadySize] = TaskArr[i];
                 ReadySize++;
-                TaskArr[i].queued = 1; // queued field indicates a task has 'arrived'
-            } else {
-                continue;
+                // setting queued indicates the task has arrived
+                TaskArr[i].queued = 1;
             }
         }
         
-        for (int i = 0; i < ReadySize; i++) { // for FCFS, the first non-null task in the array is chosen
-            if (ReadyArr[i].null == 0) { // null is a field for determining when a task is finished
+        // FCFS chooses the first task in the list to execute
+        for (int i = 0; i < ReadySize; i++) {
+            // Checks if the task has not finished, if not it sets index to the index of that task
+            if (ReadyArr[i].null == 0) {
                 index = i;
                 break;
             }
         }
-        if (index == -1 || ReadyArr[index].null == 1) { // this is to check if computer is idle
+
+        // If there are no tasks queued then the cpu is idle
+        if (index == -1 || ReadyArr[index].null == 1) {
             CurrentTime++;
             idle_time++;
             continue;
         } 
 
-        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) { // set burst time
+        // This checks that the task has not yet started and if not then it sets its start time
+        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) {
             ReadyArr[index].start_time = CurrentTime;
         }
 
-        while (ReadyArr[index].remaining_time != 0) { // the process continues to run until finished
+        // This loop runs the task until it is finished
+        while (ReadyArr[index].remaining_time != 0) {
             printf("<time %u> process %u is running ...\n", CurrentTime, ReadyArr[index].pid);
             ReadyArr[index].remaining_time--;
             CurrentTime++;
             if (ReadyArr[index].remaining_time == 0) {
                 printf("<time %u> process %u is finished ...\n", CurrentTime, ReadyArr[index].pid);
-                ReadyArr[index].finish_time = CurrentTime; // change finish_time field to CurrentTime
+                // The task has finished so set finish_time
+                ReadyArr[index].finish_time = CurrentTime;
                 FinishArr[FinishSize] = ReadyArr[index];
                 FinishSize++;
-                ReadyArr[index].null = 1; // task is null to indicate it shouldnt be selected to run
+                // task has finished so null is set
+                ReadyArr[index].null = 1;
                 break;
             }
         }
@@ -223,42 +231,47 @@ void srtf_policy(task_t TaskArr[], u_int count) {
     u_int CanContinue = 1;
     
     while (CanContinue == 1) {
-        for (int i = 0; i < count; i++) { // deals with newly arrived tasks
+        // This loop gets the newly arrived tasks and adds them to the queue
+        for (int i = 0; i < count; i++) {
             if (TaskArr[i].queued == 0 && TaskArr[i].arrival_time <= CurrentTime) {
                 TaskArr[i].remaining_time = TaskArr[i].burst_time;
                 ReadyArr[ReadySize] = TaskArr[i];
                 ReadySize++;
                 TaskArr[i].queued = 1;
-            } else {
-                continue;
             }
         }
-        u_int shortest_remaining = INT32_MAX;
-        u_int shortest_remaining_index = -1; // different from FCFS, must choose shortest remaining time
-        for (int i = 0; i < ReadySize; i++) { // at the end of this for block, the shortest remaining time index will be saved
-            if (ReadyArr[i].null == 0 && ReadyArr[i].remaining_time < shortest_remaining) {
-                shortest_remaining_index = i;
-                shortest_remaining = ReadyArr[i].remaining_time;
+        // Initially set the shortest remaining to INT32_MAX so that the program will run
+        u_int ShortestRemaining = INT32_MAX;
+        // This variable keeps track of the stortest remaining task index
+        u_int ShortestRemainingIndex = -1;
+        // This loop finds the shortest remaining task index
+        for (int i = 0; i < ReadySize; i++) {
+            if (ReadyArr[i].null == 0 && ReadyArr[i].remaining_time < ShortestRemaining) {
+                ShortestRemainingIndex = i;
+                ShortestRemaining = ReadyArr[i].remaining_time;
             } 
             
-            if (shortest_remaining_index == -1) {
+            if (ShortestRemainingIndex == -1) {
                 break;
             }
             else {
-                index = shortest_remaining_index;
+                index = ShortestRemainingIndex;
             }
         }
-        if (index == -1 || ReadyArr[index].null == 1) { // checks if CPU is idle
+        // This checks if the cpu is idle and if so it adds to idle_time
+        if (index == -1 || ReadyArr[index].null == 1) {
             CurrentTime++;
             idle_time++;
             continue;
         }
 
-        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) { //set start time
+        // Sets the start time of the currently running task
+        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) {
             ReadyArr[index].start_time = CurrentTime;
         }
 
-        while (ReadyArr[index].remaining_time != 0) { // task continues until finished
+        // This runs the task until it is finished
+        while (ReadyArr[index].remaining_time != 0) {
             printf("<time %u> process %u is running ...\n", CurrentTime, ReadyArr[index].pid);
             ReadyArr[index].remaining_time--;
             CurrentTime++;
@@ -267,23 +280,27 @@ void srtf_policy(task_t TaskArr[], u_int count) {
                 ReadyArr[index].finish_time = CurrentTime;
                 FinishArr[FinishSize] = ReadyArr[index];
                 FinishSize++;
-                ReadyArr[index].null = 1; // 'removed' from ready queue
+                // Sets null so the task is finished
+                ReadyArr[index].null = 1;
                 break;
             }
         }
 
-        u_int placeholder = 0; //determines if work is still to be done
+        u_int placeholder = 0;
+        // This loop checks if there are still tasks ready/waiting
         for (int i = 0; i < count; i++) {
             if (ReadyArr[i].null == 0 || TaskArr[i].queued == 0) {
                 placeholder++;
             }
         }
+        // If there are no tasks ready/waiting then end execution
         if (placeholder == 0) {
             CanContinue = 0;
         }
     }
 
-    for (int i = 0; i < count; i++) { //statistical analysis
+    // This calculates the totals for the stats
+    for (int i = 0; i < count; i++) {
         u_int response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
         u_int waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
         u_int trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
@@ -291,8 +308,10 @@ void srtf_policy(task_t TaskArr[], u_int count) {
         stats.WaitingAverage += waiting_time;
         stats.TurnaroundAverage += trnd;
     }
+    // This calculates the percent of time the CPU was being used
     double divide = (double)(idle_time/CurrentTime) * 100;
     stats.CPUUsage = 100-divide;
+    // This calculates the averages of the stats
     stats.ResponseAverage /= count;
     stats.WaitingAverage /= count;
     stats.TurnaroundAverage /= count;
@@ -314,75 +333,85 @@ void rr_policy(task_t TaskArr[], u_int count, u_int quantum) {
 
     u_int CanContinue = 1;
 
-    u_int timeSinceSwitch = 0; // implements the quantum
+    // This variable tracks the quantum
+    u_int timeSinceSwitch = 0;
 
     while (CanContinue == 1) {
-        for (int i = 0; i < count; i++) { // deals with new arrivals
+        // This loop gets newly arriving tasks
+        for (int i = 0; i < count; i++) {
             if (TaskArr[i].queued == 0 && TaskArr[i].arrival_time <= CurrentTime) {
                 TaskArr[i].remaining_time = TaskArr[i].burst_time;
                 ReadyArr[ReadySize] = TaskArr[i];
                 ReadySize++;
                 TaskArr[i].queued = 1;
-            } else {
-                continue;
             }
         }
 
-        if (index >= 0 && index == (ReadySize - 1)) { // each go around, the 'locks' on each process is lifted
-            for (int i = 0; i < ReadySize; i++) { // this lock is to ensure that the same process is not chosen before each other process goes at least once
-                ReadyArr[i].doneThisRound = 0;
+        // This checks if the tasks have been done this 'round' and if they have it 'unlocks' them by zeroing TurnTaken
+        if (index >= 0 && index == (ReadySize - 1)) {
+            for (int i = 0; i < ReadySize; i++) {
+                ReadyArr[i].TurnTaken = 0;
             }
         }
-        // here is where we choose the next task
-        for (int i = 0; i < ReadySize; i++) { // only choose tasks that have not gone that round, i.e. choose a task so that no tasks in the ready array will be skipped
-            if (i != index && ReadyArr[i].null == 0 && ReadyArr[i].doneThisRound == 0) {
+        // This loop gets the first task where TurnTaken is zero and it hasn't finished
+        for (int i = 0; i < ReadySize; i++) {
+            if (i != index && ReadyArr[i].null == 0 && ReadyArr[i].TurnTaken == 0) {
                 index = i;
-                ReadyArr[i].doneThisRound = 1;
+                ReadyArr[i].TurnTaken = 1;
                 break;
             }
         }
-        if (index == -1 || ReadyArr[index].null == 1) { // deals with idle CPU time
+        // This checks if there are no tasks running and if so it adds idle time to the CPU
+        if (index == -1 || ReadyArr[index].null == 1) {
             CurrentTime++;
             idle_time++;
             continue;
         }
 
-        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) { // set start time
+        // If the process has not started yet then set its start time to CurrentTime
+        if (ReadyArr[index].remaining_time == ReadyArr[index].burst_time) {
             ReadyArr[index].start_time = CurrentTime;
         }
 
-        while (ReadyArr[index].remaining_time != 0) { //task runs during its time slot ... 
+        // Runs the task for the duration of the time quantum
+        while (ReadyArr[index].remaining_time != 0) {
             printf("<time %u> process %u is running ...\n", CurrentTime, ReadyArr[index].pid);
             ReadyArr[index].remaining_time--;
             CurrentTime++;
-            timeSinceSwitch++; // time builds up until ...
+            // Increments this each time to track the quantum
+            timeSinceSwitch++;
             if (ReadyArr[index].remaining_time == 0) {
                 printf("<time %u> process %u is finished ...\n", CurrentTime, ReadyArr[index].pid);
                 ReadyArr[index].finish_time = CurrentTime;
                 FinishArr[FinishSize] = ReadyArr[index];
                 FinishSize++;
                 ReadyArr[index].null = 1;
-                timeSinceSwitch = 0; // if a task is finished, timeSinceSwitch is reset
+                // Resets the quantum because the task has finished
+                timeSinceSwitch = 0;
                 break;
             }
-            if (timeSinceSwitch == quantum) { // when timeSinceSwitch is the size of the quantum, it is another task's turn
-                timeSinceSwitch = 0; // timeSinceSwitch is reset
+            // If timeSinceSwitch equals quantum then the task should be changed
+            if (timeSinceSwitch == quantum) {
+                timeSinceSwitch = 0;
                 break;
             }
         }
 
-        u_int placeholder = 0; // deals with loop, sees if any tasks are waiting/ready
+        // This checks if there are any waiting/ready tasks
+        u_int placeholder = 0;
         for (int i = 0; i < count; i++) {
             if (ReadyArr[i].null == 0 || TaskArr[i].queued == 0) {
                 placeholder++;
             }
         }
+        // If there is nothing waiting/ready then the program can finish execution
         if (placeholder == 0) {
             CanContinue = 0;
         }
     }
 
-    for (int i = 0; i < count; i++) { //statistical analysis
+    // This calculates the totals for the stats
+    for (int i = 0; i < count; i++) {
         u_int response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
         u_int waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
         u_int trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
@@ -390,8 +419,10 @@ void rr_policy(task_t TaskArr[], u_int count, u_int quantum) {
         stats.WaitingAverage += waiting_time;
         stats.TurnaroundAverage += trnd;
     }
+    // This calculates the total cpu usage
     double divide = (double)(idle_time/CurrentTime) * 100;
     stats.CPUUsage = 100-divide;
+    // This divides the stats by count to get the averages
     stats.ResponseAverage /= count;
     stats.WaitingAverage /= count;
     stats.TurnaroundAverage /= count;
