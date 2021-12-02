@@ -90,13 +90,13 @@ int main( int argc, char *argv[] )  {
     printf("==================================================================\n");
 
     //task master chooses which type of policy to use and then calls it
-    task_master(TaskArr, count, argv[2], quantum);
+    TaskMaster(TaskArr, count, argv[2], quantum);
 
     fclose(fp);
     return EXIT_SUCCESS;
 }
 
-void task_master(task_t task_list[], int size, char *procedure, u_int quantum) {
+void TaskMaster(task_t task_list[], int size, char *procedure, u_int quantum) {
     if (strcmp(procedure, "FCFS") == 0) {
         fcfs_policy(task_list, size);
     }
@@ -113,10 +113,10 @@ void task_master(task_t task_list[], int size, char *procedure, u_int quantum) {
     }
     // print the data from stats
     printf("============================================================\n");
-    printf("Average waiting time:    %u\n", stats.WaitingAverage);
-    printf("Average response time:   %u\n", stats.ResponseAverage);
-    printf("Average turnaround time: %u\n", stats.TurnaroundAverage);
-    printf("Average CPU usage:       %.2f%%\n", stats.CPUUsage); // 2 decimal places format
+    printf("Average waiting time:    %.2f\n", stats.WaitingAverage);
+    printf("Average response time:   %.2f\n", stats.ResponseAverage);
+    printf("Average turnaround time: %.2f\n", stats.TurnaroundAverage);
+    printf("Average CPU usage:       %.2f%%\n", stats.CPUUsage);
     printf("============================================================\n");
 }
 
@@ -199,9 +199,9 @@ void fcfs_policy(task_t TaskArr[], u_int count) {
     }
     // Calculating totals for the stats which will later be divided by count to get the final average
     for (int i = 0; i < count; i++) {
-        u_int response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
-        u_int waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
-        u_int trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
+        double response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
+        double waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
+        double trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
         stats.ResponseAverage += response;
         stats.WaitingAverage += waiting_time;
         stats.TurnaroundAverage += trnd;
@@ -301,9 +301,9 @@ void srtf_policy(task_t TaskArr[], u_int count) {
 
     // This calculates the totals for the stats
     for (int i = 0; i < count; i++) {
-        u_int response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
-        u_int waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
-        u_int trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
+        double response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
+        double waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
+        double trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
         stats.ResponseAverage += response;
         stats.WaitingAverage += waiting_time;
         stats.TurnaroundAverage += trnd;
@@ -412,9 +412,9 @@ void rr_policy(task_t TaskArr[], u_int count, u_int quantum) {
 
     // This calculates the totals for the stats
     for (int i = 0; i < count; i++) {
-        u_int response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
-        u_int waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
-        u_int trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
+        double response = ReadyArr[i].start_time - ReadyArr[i].arrival_time;
+        double waiting_time = ReadyArr[i].finish_time - ReadyArr[i].arrival_time - ReadyArr[i].burst_time;
+        double trnd = ReadyArr[i].finish_time - ReadyArr[i].arrival_time;
         stats.ResponseAverage += response;
         stats.WaitingAverage += waiting_time;
         stats.TurnaroundAverage += trnd;

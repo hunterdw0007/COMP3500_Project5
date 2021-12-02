@@ -1,0 +1,41 @@
+Hunter Westerlund
+hdw0007@auburn.edu
+COMP 3500 Project 5
+
+7.1 (6 points) Solution Description
+    You must describe your solutions with good sample input and output to show users what your scheduler is doing.
+    (1)How did you separate scheduling mechanism from scheduling policies? 
+        I utilized a function called TaskMaster to choose which scheduling policy to run based on the user's input.
+    (2)How did implement the three scheduling algorithms?
+        The three algorithms are each implemented in separate functions in the code so that they can be called
+        independently based on the user's input.
+    (3)How did you calculate waiting times? 
+        Waiting times are found by subtracting the arrival time (given in the input file) and burst time
+        (given in the input file) from the finish time as determined during the algorithms running.
+    (4)How did you calculate response times?
+        Response times are calculated by subtracting the arrival time given in the input file from the start time which
+        is determined during the running of the algorithm.
+    (5)How did you calculate turnaround times? 
+        Turnaround time is calculated by subtracting the finish time found during runtime from the arrival time (given in the input file).
+    (6)How did you implement the command-line parser?
+        Similar to the example file input.c, I used int argc and char *argv[] to pass in a variable number of command line arguments
+        into the main method of the code. From there I determined if the arguments were valid and then ran the program.
+
+7.2 (6 points) Generality and Error Checking
+    (1)How general is your solution?
+        My code is fairly general while also following the requirements given by this assignment. 
+        I made sure it can run with a variety of inputs of various lengths using all three scheduling policies.
+    (2)How easy would it be to add a new scheduling policy into your scheduler? 
+        It would be relatively simple to add a new scheduling policy since each policy is contained in its own method so adding
+        another one would only require adding the method and adding it to the TaskMaster method.
+    (3)Does your program offer input error checking? 
+        Yes, the main method determines if the correct number of arguments are given for the program and TaskMaster validates that
+        the policy given in the input is one of the three policys implemented.
+
+7.3 (3 points) Miscellaneous factors
+    (1)Is your code elegant?
+        I tried to make my code as consistent as possible and use consistent variable names in my code so that is was readable and neat.
+    (2)How innovative is your solution? Did you try any ideas not suggested here? 
+        I tried to make my code as robust as possible without making it too complicated so that it was hard to write and test.
+    (3)Did you document all outside sources?
+        I did not use any outside sources for code other that just looking up documentation on basic C syntax.

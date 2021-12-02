@@ -27,14 +27,14 @@ typedef struct task_info { // each task has many features
 } task_t;
 
 typedef struct stat_info { // statistical analysis
-    u_int WaitingAverage;
-    u_int TurnaroundAverage;
-    u_int ResponseAverage;
+    double WaitingAverage;
+    double TurnaroundAverage;
+    double ResponseAverage;
     double CPUUsage;
 } stat_info_t;
 
 // TaskList is the waiting list, size is the size of waiting list, Policy is the policy passed in, and TimeQuantum is for round robin
-void task_master(task_t TaskList[], int size, char *Policy, u_int TimeQuantum);
+void TaskMaster(task_t TaskList[], int size, char *Policy, u_int TimeQuantum);
 // chooses the correct policy function to call
 
 //TaskArr is the waiting list, count is the size of waiting list
