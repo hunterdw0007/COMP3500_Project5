@@ -1,6 +1,6 @@
 #see README for a manual compilation process
 CC = gcc
-CFLAGS = -g
+CFLAGS = -g -std=c99
 OBJ = open.o read.o print.o
 
 scheduler: $(OBJ) scheduler.c

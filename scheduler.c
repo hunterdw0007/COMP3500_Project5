@@ -240,8 +240,8 @@ void srtf_policy(task_t TaskArr[], u_int count) {
                 TaskArr[i].queued = 1;
             }
         }
-        // Initially set the shortest remaining to INT32_MAX so that the program will run
-        u_int ShortestRemaining = INT32_MAX;
+        // Initially set the shortest remaining to UINT_MAX value
+        u_int ShortestRemaining = 4294967295;	
         // This variable keeps track of the stortest remaining task index
         u_int ShortestRemainingIndex = -1;
         // This loop finds the shortest remaining task index
